@@ -26,7 +26,7 @@ const SignupPage = () => {
     try{
       const response = await axios.post(`${URL}/signup`,form);
 
-      console.log("user creater",response);
+      localStorage.setItem("username",form.username);
       toast.success("user registerd successfully",{position:"bottom-right"});
       setTimeout(() => {
          navigate('/main');

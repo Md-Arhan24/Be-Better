@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import SideBar from "./SideBar";
-import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { URL } from "../../../api";
 import Expand from "./Expand";
@@ -42,7 +40,7 @@ function getGreeting() {
 
 export default function DailyFocusView() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [username, setUsername] = useState();
+  const [username, setUserName] = useState<string>("");
   const [customTasks, setCustomTasks] = useState<CustomTask[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [selectedTask, setSelectedTask] = useState<Task & { planDay?: any } | null>(null);
@@ -86,10 +84,8 @@ export default function DailyFocusView() {
   };
 
   useEffect(() => {
-    const token = Cookies.get("token");
-    const decode = jwtDecode(token);
-    const name = decode.username;
-    setUsername(name);
+   const username = localStorage.getItem("username");
+  setUserName(username || "");
 
     async function getRes() {
       try {

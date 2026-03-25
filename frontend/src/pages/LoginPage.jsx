@@ -37,31 +37,31 @@ const LoginPage = () => {
     }
   }
 
-    async function handleSubmit(e) {
-      e.preventDefault();
-      try {
-        
-        
-        const response = await axios.post(`${URL}/login`,form,{withCredentials: true });
+   async function handleSubmit(e) {
+  e.preventDefault();
+  try {
+    const response = await axios.post(`${URL}/login`, form, { withCredentials: true });
 
-        if (response.status == 201) {
-          showToastMessage("successfully login", true);
-          setTimeout(() => {
-            navigate("/main");
-            
-          }, 1000);
-        } else {
-          showToastMessage("user does not exits", false);
-        }
-        
-      } catch (e) {
-        console.log(e);
-      }
-      setForm({
-        email: "",
-        password: "",
-      });
+    if (response.data.success) {
+      localStorage.setItem("username", response.data.username);
+      localStorage.setItem("userId", response.data.userId);
+
+      showToastMessage("successfully login", true);
+      setTimeout(() => {
+        navigate("/main");
+      }, 1000);
+    } else {
+      showToastMessage(response.data.message || "user does not exist", false);
     }
+
+  } catch (e) {
+    console.log(e);
+  }
+  setForm({
+    email: "",
+    password: "",
+  });
+}
 
   
 

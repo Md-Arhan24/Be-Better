@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { URL } from "../../../api";
@@ -58,32 +56,34 @@ export default function SideBar() {
   }, [location.pathname, isDesktop]);
 
   // ── Auth ──
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const decode = jwtDecode(token);
-    setUserName(decode.username);
-  }, []);
+useEffect(() => {
+  const username = localStorage.getItem("username");
+  setUserName(username || "");
+}, []);
 
   const showToastMessage = (message: string, success: boolean) => {
     if (success) toast.success(message, { position: "bottom-right" });
     else         toast.error(message,   { position: "top-right" });
   };
 
-  async function logout() {
-    try {
-      const res = await axios.post(`${URL}/logout`, {}, { withCredentials: true });
-      if (res.data.status) {
-        showToastMessage("User logged out successfully", true);
-        setShowSettingsPopup(false);
-        setTimeout(() => navigate("/"), 1000);
-      } else {
-        showToastMessage("No active session", false);
-      }
-    } catch (e) {
-      console.log(e);
-      showToastMessage("No user found", false);
+async function logout() {
+  try {
+    const res = await axios.post(`${URL}/logout`, {}, { withCredentials: true });
+    if (res.data.status) {
+      localStorage.removeItem("username");
+      localStorage.removeItem("userId");
+
+      showToastMessage("User logged out successfully", true);
+      setShowSettingsPopup(false);
+      setTimeout(() => navigate("/"), 1000);
+    } else {
+      showToastMessage("No active session", false);
     }
+  } catch (e) {
+    console.log(e);
+    showToastMessage("No user found", false);
   }
+}
 
   return (
     <>
