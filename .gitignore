@@ -1,0 +1,7 @@
+backend/node_modules
+frontend/node_modules
+.DS_Store
+frontend/.env
+backend/.env
+Guide.md
+Learning.md
