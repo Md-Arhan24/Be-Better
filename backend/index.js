@@ -14,8 +14,8 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
+    origin: ["http://localhost:5173", "https://becomebest.netlify.app"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   }),
 );

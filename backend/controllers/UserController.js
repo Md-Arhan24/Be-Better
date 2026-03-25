@@ -1,7 +1,7 @@
 const userModel = require("../model/userModel");
 const { createSecretToken } = require("../utils/SecretToken");
 const bcrypt = require("bcrypt");
-const {calculateStreak} = require("../utils/streakHealper");
+const { calculateStreak } = require("../utils/streakHealper");
 
 module.exports.signUp = async (req, res, next) => {
   try {
@@ -25,10 +25,9 @@ module.exports.signUp = async (req, res, next) => {
     const token = createSecretToken(userCreat._id, userCreat.username);
 
     res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: false,
-      sameSite: "lax", //balanced between secutiry and usableity
-      secure: false,
+      httpOnly: true,
+      sameSite: "none", // required for cross-domain
+      secure: true, // required when sameSite is "none"
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
@@ -62,19 +61,19 @@ module.exports.Login = async (req, res, next) => {
       return res.json({ message: "incorrect password or email" });
     }
 
-    const token = createSecretToken(userFind._id,userFind.username);
+    const token = createSecretToken(userFind._id, userFind.username);
     res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: false,
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
-    res
-      .status(201)
-      .json({
-        message: "user login successfully",
-        success: true,
-        userId: userFind._id,
-        username: userFind.username,
-      });
+    res.status(201).json({
+      message: "user login successfully",
+      success: true,
+      userId: userFind._id,
+      username: userFind.username,
+    });
   } catch (e) {
     console.log(e);
   }
@@ -89,8 +88,8 @@ module.exports.Logout = async (req, res) => {
     res.cookie("token", "", {
       httpOnly: true,
       expires: new Date(0),
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none", // must match login cookie
     });
     return res.json({ message: "user logout successfully", status: true });
   } catch (e) {
@@ -106,7 +105,7 @@ module.exports.updateStreak = async (req, res) => {
 
     const { current, lastActivityDate } = calculateStreak(
       user.streak.lastActivityDate,
-      user.streak.current
+      user.streak.current,
     );
 
     user.streak.current = current;
@@ -126,7 +125,11 @@ module.exports.getStreak = async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // If old user has no streak field, return defaults
-    const streak = user.streak ?? { current: 0, longest: 0, lastActivityDate: null };
+    const streak = user.streak ?? {
+      current: 0,
+      longest: 0,
+      lastActivityDate: null,
+    };
 
     return res.json({ streak });
   } catch (err) {
