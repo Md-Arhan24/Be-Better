@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { FURL } from '../../api';
+
 
 export function Hero() {
   const [text, setText] = useState("");
