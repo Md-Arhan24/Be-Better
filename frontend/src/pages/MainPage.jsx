@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import SideBar  from '../app/components/goals/SideBar'
 
-import GoalCreation from '../app/components/goals/GoalCreation'
-import RoadMap      from '../app/components/goals/RoadMap'
+
 import CalendarView from '../app/components/goals/CalendarView'
 import DailyFocus   from '../app/components/goals/DailyFocus'
 import MyGoals from '../app/components/goals/MyGoals'

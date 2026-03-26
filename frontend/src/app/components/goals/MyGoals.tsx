@@ -24,7 +24,7 @@ export default function MyGoals() {
     const getData = async () => {
       try {
         const res = await axios.get(`${URL}/goals/`, { withCredentials: true });
-        setGoals(res.data);
+        setGoals(res.data || []);
       } catch (e) {
         console.log(e);
       } finally {

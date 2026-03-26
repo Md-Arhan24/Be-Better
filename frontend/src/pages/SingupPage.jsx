@@ -1,45 +1,58 @@
-import React from 'react';
+import React from "react";
 import { motion } from "motion/react";
-import { useState } from 'react';
-import axios from 'axios';
-import {URL} from '../api';
-import {useNavigate} from 'react-router-dom';
-import { Target, Mail, Lock, User, ArrowRight, Sparkles, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import axios from "axios";
+import { URL } from "../api";
+import { useNavigate } from "react-router-dom";
+import {
+  Target,
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Sparkles,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = React.useState(false);
-  const[form,setForm] = useState({username:"",email:"",password:""});
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const navigate = useNavigate();
 
-  function handleFrom(event){
+  function handleFrom(event) {
     setForm((prev_obj) => {
-      return {...prev_obj,[event.target.name]:event.target.value};
+      return { ...prev_obj, [event.target.name]: event.target.value };
     });
   }
 
-  async function handleFormSubmit(e){
+  async function handleFormSubmit(e) {
     e.preventDefault();
     console.log(form);
-    
-    try{
-      const response = await axios.post(`${URL}/signup`,form);
 
-      localStorage.setItem("username",form.username);
-      toast.success("user registerd successfully",{position:"bottom-right"});
-      setTimeout(() => {
-         navigate('/main');
-      }, 1500);
-
-
-     
-
-    }catch(e){
+    try {
+      const response = await axios.post(`${URL}/signup`, form, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        localStorage.setItem("username", response.data.userCreat.username);
+        localStorage.setItem("userId", response.data.userCreat._id);
+        toast.success("user registered successfully", {
+          position: "bottom-right",
+        });
+        setTimeout(() => navigate("/main"), 1500);
+      } else {
+        toast.error(response.data.message || "signup failed", {
+          position: "bottom-right",
+        });
+      }
+    } catch (e) {
       console.log(e);
-      toast.failure(`${e.message}`,{position:"bottom-right"});
+      toast.error(`${e.message}`, { position: "bottom-right" });
     }
-    setForm({username:"",email:"",password:""});
+    setForm({ username: "", email: "", password: "" });
   }
 
   return (
@@ -54,7 +67,7 @@ const SignupPage = () => {
           transition={{
             duration: 20,
             repeat: Infinity,
-            ease: "linear"
+            ease: "linear",
           }}
           className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"
         />
@@ -66,7 +79,7 @@ const SignupPage = () => {
           transition={{
             duration: 15,
             repeat: Infinity,
-            ease: "linear"
+            ease: "linear",
           }}
           className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"
         />
@@ -129,7 +142,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   placeholder="user_name"
-                  name='username'
+                  name="username"
                   value={form.username}
                   onChange={handleFrom}
                   className="w-full bg-white/10 border border-white/20 rounded-xl px-12 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all"
@@ -147,7 +160,7 @@ const SignupPage = () => {
                 <input
                   type="email"
                   placeholder="you@example.com"
-                  name='email'
+                  name="email"
                   value={form.email}
                   onChange={handleFrom}
                   className="w-full bg-white/10 border border-white/20 rounded-xl px-12 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all"
@@ -165,7 +178,7 @@ const SignupPage = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  name='password'
+                  name="password"
                   value={form.password}
                   onChange={handleFrom}
                   className="w-full bg-white/10 border border-white/20 rounded-xl px-12 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all"
@@ -194,7 +207,10 @@ const SignupPage = () => {
                 id="terms"
                 className="w-4 h-4 rounded border-white/20 bg-white/10 text-white focus:ring-white/50 mt-0.5"
               />
-              <label htmlFor="terms" className="text-white/70 text-sm cursor-pointer">
+              <label
+                htmlFor="terms"
+                className="text-white/70 text-sm cursor-pointer"
+              >
                 I agree to the{" "}
                 <a href="#" className="text-white hover:underline">
                   Terms of Service
@@ -224,7 +240,9 @@ const SignupPage = () => {
               <div className="w-full border-t border-white/10"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-black text-white/50">Or sign up with</span>
+              <span className="px-4 bg-black text-white/50">
+                Or sign up with
+              </span>
             </div>
           </div>
 
@@ -270,7 +288,7 @@ const SignupPage = () => {
           Join 10,000+ users who are already becoming their best version
         </motion.p>
       </motion.div>
-         <ToastContainer />
+      <ToastContainer />
     </div>
   );
 };
